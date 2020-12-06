@@ -8,6 +8,12 @@ import Cookies from "js-cookie";
 import "@shopify/polaris/dist/styles.css";
 import translations from "@shopify/polaris/locales/en.json";
 
+import { Provider as ReduxProvider } from "react-redux";
+import { createStore } from "redux";
+import reducers from './store/reducers';
+
+const store = createStore(reducers);
+
 const client = new ApolloClient({
   fetch: fetch,
   fetchOptions: {
@@ -28,7 +34,9 @@ class MyApp extends App {
           }}
         >
           <ApolloProvider client={client}>
-            <Component {...pageProps} />
+            <ReduxProvider store={store}>
+              <Component {...pageProps} />
+            </ReduxProvider>
           </ApolloProvider>
         </Provider>
       </AppProvider>

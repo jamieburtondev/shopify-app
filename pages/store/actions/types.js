@@ -1,0 +1,2 @@
+export const ADD_TO_PICKUP = 'ADD_TO_PICKUP';
+export const REMOVE_FROM_PICKUP = 'REMOVE_FROM_PICKUP';
