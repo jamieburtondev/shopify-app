@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { DisplayText, Heading, Subheading } from "@shopify/polaris";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
@@ -26,13 +27,13 @@ const Location = (props) => {
   const { name, address } = data.location
 
   return (
-    <div>
+    <Fragment>
       <DisplayText size="large"> Mobile Ordering </DisplayText>
       <Heading> {name} </Heading>
       <Subheading>
         {address.city}, {address.provinceCode}{" "}
       </Subheading>
-    </div>
+    </Fragment>
   );
 };
 
