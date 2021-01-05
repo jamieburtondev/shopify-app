@@ -65,7 +65,7 @@ const SET_STOCK = gql`
 `;
 
 const Products = (props) => {
-  const { id, searchValue, searchCollections } = props;
+  const { id, searchValue, searchCollection } = props;
   const { data, loading, error, refetch: _refetch } = useQuery(GET_PRODUCTS, {
     variables: { id: `gid://shopify/Location/${id}` },
   });
@@ -114,8 +114,8 @@ const Products = (props) => {
     formattedProducts = formattedProducts.filter(product => product.title.toLowerCase().includes(searchValue.toLowerCase()));
   }
 
-  if (searchCollections) {
-    formattedProducts = formattedProducts.filter(product => product.collections.includes(searchCollections.toLowerCase()));
+  if (searchCollection) {
+    formattedProducts = formattedProducts.filter(product => product.collections.includes(searchCollection.toLowerCase()));
   }
 
   const outOfStockProducts = [];
@@ -146,8 +146,8 @@ const Products = (props) => {
 
   return (
     <Fragment>
-      {productsToShow.length === 0 && (props.searchValue || props.searchCollections) && <p> No results match the filter. </p>}
-      { productsToShow.length === 0 && !props.searchValue && !props.searchCollections && <p>There are currently no results. </p> }
+      {productsToShow.length === 0 && (props.searchValue || props.searchCollection) && <p> No results match the filter. </p>}
+      { productsToShow.length === 0 && !props.searchValue && !props.searchCollection && <p>There are currently no results. </p> }
       {productsToShow.length > 0 && productsToShow.map((product, index) => (
         <Card key={`${product.title}-${index}`}>
           <Card.Section>

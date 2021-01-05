@@ -6,7 +6,7 @@ class Products extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { checked: true, searchValue: "", searchCollections: "" };
+    this.state = { checked: true, searchValue: "", searchCollection: "" };
     this.toggleProducts = this.toggleProducts.bind(this);
   }
 
@@ -18,8 +18,8 @@ class Products extends Component {
     this.setState({ searchValue: value });
   }
 
-  searchCollections(collection) {
-    this.setState({ searchCollections: collection });
+  searchCollection(collection) {
+    this.setState({ searchCollection: collection });
   }
 
   render() {
@@ -62,14 +62,14 @@ class Products extends Component {
           <Select
             label="Filter By Collection"
             options={options}
-            value={this.state.searchCollections}
+            value={this.state.searchCollection}
             onChange={(collectionValue) =>
-              this.searchCollections(collectionValue)
+              this.searchCollection(collectionValue)
             }
           />
         </div>
         <ProductDetails
-          searchCollections={this.state.searchCollections}
+          searchCollection={this.state.searchCollection}
           searchValue={this.state.searchValue}
           id={this.props.id}
           checked={this.state.checked}
