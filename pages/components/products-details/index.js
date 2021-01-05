@@ -146,8 +146,8 @@ const Products = (props) => {
 
   return (
     <Fragment>
-      {productsToShow.length === 0 && props.searchValue && <p> No results match the filter. </p>}
-      { productsToShow.length === 0 && !props.searchValue && <p>There are currently no results. </p> }
+      {productsToShow.length === 0 && (props.searchValue || props.searchCollections) && <p> No results match the filter. </p>}
+      { productsToShow.length === 0 && !props.searchValue && !props.searchCollections && <p>There are currently no results. </p> }
       {productsToShow.length > 0 && productsToShow.map((product, index) => (
         <Card key={`${product.title}-${index}`}>
           <Card.Section>

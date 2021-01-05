@@ -19,7 +19,6 @@ class Products extends Component {
   }
 
   searchCollections(collection) {
-    console.log("collection", collection);
     this.setState({ searchCollections: collection });
   }
 
