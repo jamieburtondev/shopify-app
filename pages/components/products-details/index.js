@@ -1,12 +1,9 @@
-import { Fragment } from 'react';
+import { Fragment } from "react";
 import {
   Frame,
   Loading,
   Card,
-  Heading,
-  Button,
-  MediaCard,
-  Subheading,
+  Button
 } from "@shopify/polaris";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
@@ -18,6 +15,13 @@ const GET_PRODUCTS = gql`
         node {
           id
           title
+          collections(first: 2) {
+            edges {
+              node {
+                title
+              }
+            }
+          }
           images(first: 1) {
             edges {
               node {
@@ -61,15 +65,13 @@ const SET_STOCK = gql`
 `;
 
 const Products = (props) => {
-  const { id } = props;
+  const { id, searchValue, searchCollections } = props;
   const { data, loading, error, refetch: _refetch } = useQuery(GET_PRODUCTS, {
     variables: { id: `gid://shopify/Location/${id}` },
   });
   // BUG FIX
   const refetch = (args) => _refetch(args);
-  const [
-    setStock
-  ] = useMutation(SET_STOCK);
+  const [setStock] = useMutation(SET_STOCK);
 
   if (loading) {
     return (
@@ -85,9 +87,10 @@ const Products = (props) => {
 
   const products = data.products.edges;
 
-  const formattedProducts = products.map((product) => {
+  let formattedProducts = products.map((product) => {
     const title = product.node.title;
     const image = product.node.images.edges[0].node.originalSrc;
+    const collections = product.node.collections.edges.map(collection => collection.node.title.toLowerCase());
     let variants = [];
     product.node.variants.edges.forEach((variant) => {
       const variantTitle = variant.node.title;
@@ -104,13 +107,21 @@ const Products = (props) => {
       });
     });
 
-    return { title, variants, image };
+    return { title, variants, image, collections };
   });
+
+  if (searchValue) {
+    formattedProducts = formattedProducts.filter(product => product.title.toLowerCase().includes(searchValue.toLowerCase()));
+  }
+
+  if (searchCollections) {
+    formattedProducts = formattedProducts.filter(product => product.collections.includes(searchCollections.toLowerCase()));
+  }
 
   const outOfStockProducts = [];
   const inStockProducts = [];
 
-  formattedProducts.forEach(product => {
+  formattedProducts.forEach((product) => {
     const inStock = [];
     const outOfStock = [];
 
@@ -135,54 +146,63 @@ const Products = (props) => {
 
   return (
     <Fragment>
-      {productsToShow.map((product, index) => (
+      {productsToShow.length === 0 && props.searchValue && <p> No results match the filter. </p>}
+      { productsToShow.length === 0 && !props.searchValue && <p>There are currently no results. </p> }
+      {productsToShow.length > 0 && productsToShow.map((product, index) => (
         <Card key={`${product.title}-${index}`}>
           <Card.Section>
-            <Heading> {product.title} </Heading>
+            <p className="product-title"> {product.title} </p>
           </Card.Section>
 
-          <MediaCard>
-            <img
-              src={product.image ? product.image : null}
-              alt=""
-              width="100px"
-              height="100%"
-              style={{
-                objectFit: "cover",
-                objectPosition: "center",
-              }}
-            />
-          </MediaCard>
-
-          {product.variants.map((variant) => (
-            <Card>
-              <p> {variant.available} </p>
-
-              {variant.title === "Default Title" ? (
-                ""
-              ) : (
-                <Subheading> {variant.title} </Subheading>
-              )}
-
-              <Button
-                primary
-                onClick={async () => {
-                  await setStock({
-                    variables: {
-                      inventoryLevelId: variant.inventoryLevelId,
-                      stockAdjustment: props.checked
-                        ? variant.available * -1
-                        : 10,
-                    },
-                  });
-
-                  refetch();
+          <div className="media-card-spacing">
+              <img
+                src={product.image ? product.image : null}
+                alt=""
+                width="100px"
+                height="100%"
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
                 }}
+              />
+          </div>
+
+          <div className="product-variants">
+            {product.variants.map((variant) => (
+              <div
+                className="product-variant"
+                key={`${product.title}-${variant.title}-${index}`}
               >
-                {variant.available ? "Set Out of Stock" : "Set In Stock"}
-              </Button>
-            </Card>
-          ))}
+                {variant.title === "Default Title" ? (
+                  <p className="stock-variant-title"> No Variants </p>
+                ) : (
+                  <p className="stock-variant-title"> {variant.title} </p>
+                )}
+
+                {/* <p className="stock-variant-available"> Amount Available: {variant.available} </p> */}
+
+                <div className="small-spacing">
+                  <Button
+                    primary
+                    onClick={async () => {
+                      await setStock({
+                        variables: {
+                          inventoryLevelId: variant.inventoryLevelId,
+                          stockAdjustment: props.checked
+                            ? variant.available * -1
+                            : 10,
+                        },
+                      });
+
+                      refetch();
+                    }}
+                  >
+                    {variant.available ? "Set Out of Stock" : "Set In Stock"}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         </Card>
       ))}
     </Fragment>

@@ -14,7 +14,7 @@ class Locations extends Component {
 
   submitLocation(e) {
     e.preventDefault();
-    
+
     this.setState({ open: false }, () => {
       this.props.retrieveLocation(locations[this.state.location]);
     });
@@ -26,10 +26,7 @@ class Locations extends Component {
 
   render() {
     return (
-      <Modal
-        title="Store Location"
-        open={this.state.open}
-      >
+      <Modal title="Store Location" open={this.state.open}>
         <Modal.Section>
           <Form onSubmit={this.submitLocation}>
             <TextField
@@ -40,9 +37,11 @@ class Locations extends Component {
               helpText="Add your store's Location ID (e.g. 2)."
             />
 
-            <Button primary submit disabled={!locations[this.state.location]}>
-              Submit
-            </Button>
+            <div className="small-spacing">
+              <Button primary submit disabled={!locations[this.state.location]}>
+                Submit
+              </Button>
+            </div>
           </Form>
         </Modal.Section>
       </Modal>

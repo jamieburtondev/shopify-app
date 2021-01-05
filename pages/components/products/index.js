@@ -1,12 +1,12 @@
 import React, { Component, Fragment } from "react";
 import ProductDetails from "../products-details";
-import { Stack, RadioButton } from "@shopify/polaris";
+import { Stack, RadioButton, TextField, Select } from "@shopify/polaris";
 
 class Products extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { checked: true };
+    this.state = { checked: true, searchValue: "", searchCollections: "" };
     this.toggleProducts = this.toggleProducts.bind(this);
   }
 
@@ -14,27 +14,64 @@ class Products extends Component {
     this.setState({ checked: !this.state.checked });
   }
 
+  searchProducts(value) {
+    this.setState({ searchValue: value });
+  }
+
+  searchCollections(collection) {
+    console.log("collection", collection);
+    this.setState({ searchCollections: collection });
+  }
+
   render() {
+    const options = [
+      { label: "", value: "" },
+      ...this.props.collections.map((collection) => ({
+        label: collection,
+        value: collection.toLowerCase(),
+      })),
+    ];
+
     return (
       <Fragment>
-        <h1> Products </h1>
-        <Stack vertical>
-          <RadioButton
-            label="Show In Stock Products"
-            helpText="Only items in stock will be shown."
-            checked={this.state.checked}
-            name="accounts"
-            onChange={this.toggleProducts}
+        <div className="stock">
+          <Stack vertical>
+            <RadioButton
+              label="Show In Stock Products"
+              helpText="Only items in stock will be shown."
+              checked={this.state.checked}
+              name="accounts"
+              onChange={this.toggleProducts}
+            />
+            <RadioButton
+              label="Show Out of Stock Products"
+              helpText="Only items out of stock will be shown."
+              name="accounts"
+              checked={!this.state.checked}
+              onChange={this.toggleProducts}
+            />
+          </Stack>
+        </div>
+        <div className="small-spacing">
+          <TextField
+            label="Filter By Name"
+            value={this.state.searchValue}
+            onChange={(searchValue) => this.searchProducts(searchValue)}
           />
-          <RadioButton
-            label="Show Out of Stock Products"
-            helpText="Only items out of stock will be shown."
-            name="accounts"
-            checked={!this.state.checked}
-            onChange={this.toggleProducts}
+        </div>
+        <div className="small-spacing">
+          <Select
+            label="Filter By Collection"
+            options={options}
+            value={this.state.searchCollections}
+            onChange={(collectionValue) =>
+              this.searchCollections(collectionValue)
+            }
           />
-        </Stack>
+        </div>
         <ProductDetails
+          searchCollections={this.state.searchCollections}
+          searchValue={this.state.searchValue}
           id={this.props.id}
           checked={this.state.checked}
         ></ProductDetails>

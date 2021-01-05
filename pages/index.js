@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Page, Tabs } from "@shopify/polaris";
-
+import "./style.css";
 import Orders from "./components/orders";
 import Products from "./components/products";
 import Location from "./components/location";
@@ -9,7 +9,18 @@ class Index extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { location: null, selectedTab: 0 };
+    this.state = {
+      location: null,
+      selectedTab: 0,
+      collections: [
+        "Cold Beverages",
+        "Hot Beverages",
+        "Food",
+        "Salty Snacks",
+        "Sweet Snacks",
+        "Best Selling Items",
+      ],
+    };
     this.retrieveLocation = this.retrieveLocation.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
   }
@@ -41,7 +52,7 @@ class Index extends Component {
 
     return (
       <Page>
-        { this.state.location && <Location id={this.state.location}></Location>}
+        {this.state.location && <Location id={this.state.location}></Location>}
 
         {this.state.location && (
           <Tabs
@@ -49,10 +60,20 @@ class Index extends Component {
             tabs={tabs}
             onSelect={this.handleTabChange}
           >
-            {this.state.location && (this.state.selectedTab === 0 || this.state.selectedTab === 1) && (
-              <Orders location={this.state.location} tab={this.state.selectedTab}></Orders>
+            {this.state.location &&
+              (this.state.selectedTab === 0 ||
+                this.state.selectedTab === 1) && (
+                <Orders
+                  location={this.state.location}
+                  tab={this.state.selectedTab}
+                ></Orders>
+              )}
+            {this.state.location && this.state.selectedTab === 2 && (
+              <Products
+                collections={this.state.collections}
+                id={this.state.location}
+              ></Products>
             )}
-            { this.state.location && this.state.selectedTab === 2 && <Products id={this.state.location}></Products> }
           </Tabs>
         )}
 

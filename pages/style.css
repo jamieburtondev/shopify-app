@@ -1,0 +1,41 @@
+.media-card-spacing {
+    padding: 0rem 2rem;
+}
+
+.small-spacing {
+    margin: 1rem 0;
+}
+
+.product-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.stock {
+    margin: 2rem 0;
+}
+
+.stock-variant-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.stock-variant-available {
+
+}
+
+.product-variants {
+    display: flex;
+}
+
+.product-variant {
+    margin: 2rem;
+    border: 2px solid rgba(0,0,0,.1);
+    border-radius: .5rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.product-variant p {
+    margin-bottom: 2rem;
+}
