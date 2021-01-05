@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Page, Tabs } from "@shopify/polaris";
+import { Page, Tabs, Button } from "@shopify/polaris";
 import "./style.css";
 import Orders from "./components/orders";
 import Products from "./components/products";
@@ -52,7 +52,19 @@ class Index extends Component {
 
     return (
       <Page>
-        {this.state.location && <Location id={this.state.location}></Location>}
+        <div className='store-header'>
+          {this.state.location && (
+            <Location id={this.state.location}></Location>
+          )}
+
+          {this.state.location && (
+            <div className="store-header-right small-spacing">
+              <Button primary onClick={() => this.setState({ location: "" })}>
+                Change Location
+              </Button>
+            </div>
+          )}
+        </div>
 
         {this.state.location && (
           <Tabs

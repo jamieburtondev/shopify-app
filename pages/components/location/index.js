@@ -29,7 +29,7 @@ const Location = (props) => {
   const { name, address } = data.location;
 
   return (
-    <Fragment>
+    <div className="store-header-left">
       <DisplayText size="large">
         {name ? name : "Mobile Ordering"}
       </DisplayText>
@@ -38,7 +38,7 @@ const Location = (props) => {
           {address.city}, {address.provinceCode}
         </Subheading>
       </div>
-    </Fragment>
+    </div>
   );
 };
 

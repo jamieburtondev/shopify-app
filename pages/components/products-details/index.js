@@ -174,7 +174,7 @@ const Products = (props) => {
                 key={`${product.title}-${variant.title}-${index}`}
               >
                 {variant.title === "Default Title" ? (
-                  <p className="stock-variant-title"> No Variants </p>
+                  <p className="stock-variant-title"> Only Variant </p>
                 ) : (
                   <p className="stock-variant-title"> {variant.title} </p>
                 )}
