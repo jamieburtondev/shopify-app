@@ -10,7 +10,7 @@ import translations from "@shopify/polaris/locales/en.json";
 
 import { Provider as ReduxProvider } from "react-redux";
 import { createStore } from "redux";
-import reducers from './store/reducers';
+import reducers from "./store/reducers";
 
 const store = createStore(reducers);
 
@@ -20,28 +20,26 @@ const client = new ApolloClient({
     credentials: "include",
   },
 });
-class MyApp extends App {
-  render() {
-    const { Component, pageProps } = this.props;
-    const shopOrigin = Cookies.get("shopOrigin");
-    return (
-      <AppProvider i18n={translations}>
-        <Provider
-          config={{
-            apiKey: API_KEY,
-            shopOrigin: shopOrigin,
-            forceRedirect: true,
-          }}
-        >
-          <ApolloProvider client={client}>
-            <ReduxProvider store={store}>
-              <Component {...pageProps} />
-            </ReduxProvider>
-          </ApolloProvider>
-        </Provider>
-      </AppProvider>
-    );
-  }
-}
+
+const MyApp = ({ Component, pageProps }) => {
+  const shopOrigin = Cookies.get("shopOrigin");
+  return (
+    <AppProvider i18n={translations}>
+      <Provider
+        config={{
+          apiKey: API_KEY,
+          shopOrigin: shopOrigin,
+          forceRedirect: true,
+        }}
+      >
+        <ApolloProvider client={client}>
+          <ReduxProvider store={store}>
+            <Component {...pageProps} />
+          </ReduxProvider>
+        </ApolloProvider>
+      </Provider>
+    </AppProvider>
+  );
+};
 
 export default MyApp;

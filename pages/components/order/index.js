@@ -1,69 +1,73 @@
-import { Component } from "react";
-import {
-  Card,
-  Heading,
-  Banner,
-} from "@shopify/polaris";
-
-import OrderDetails from "../order-details";
+import { useState } from "react";
+import { Card, Heading, Banner } from "@shopify/polaris";
+import OrderDetails from "../../containers/order-details";
+import getOrderTab from "../../helpers/getOrderTab";
 import moment from "moment";
 
-class Order extends Component {
-  constructor(props) {
-    super(props);
+const Order = ({
+  order,
+  orderReceived,
+  readyForPickup,
+  node: {
+    customer: { firstName: customerFirstName, lastName: customerLastName },
+    createdAt: orderCreatedAt,
+    id: orderId,
+  },
+  orderListNumber,
+  addToPickup,
+  removeFromPickup,
+}) => {
+  const [orderDetails, useOrderDetails] = useState(false);
+  const closeOrderDetails = () => useOrderDetails(false);
+  const timeSinceOrder = moment().diff(moment(orderCreatedAt), "hours");
 
-    this.state = { orderDetails: false };
-    this.closeOrderDetails = this.closeOrderDetails.bind(this);
-  }
+  const orderTab = getOrderTab({
+    addToPickup,
+    removeFromPickup,
+    readyForPickup,
+    orderReceived,
+    name: order.node.name,
+    amount: order.node.totalPriceSet.shopMoney.amount,
+    transactions: order.node.transactions,
+    id: order.node.id,
+    restricted: order.node.customAttributes.some(
+      (attribute) => attribute.key === "ageRestricted"
+    ),
+    closeOrderDetails,
+  });
 
-  closeOrderDetails() {
-    this.setState({ orderDetails: false });
-  }
+  return (
+    <div>
+      {timeSinceOrder > 350 && orderReceived && (
+        <Banner title="Fulfillment Needed" status="critical">
+          <p> This order was placed over 350 hours ago. </p>
+        </Banner>
+      )}
+      <Card
+        key={`order-${orderListNumber}`}
+        title={`${customerFirstName} ${customerLastName}`}
+        primaryFooterAction={{
+          content: "View Order",
+          onAction: () => useOrderDetails(true),
+        }}
+        footerActionAlignment="left"
+      >
+        <Card.Section>
+          <Heading>
+            <p> {timeSinceOrder} Hours Ago </p>
+          </Heading>
 
-  render() {
-    const { node } = this.props;
-    const timeSinceOrder = moment().diff(moment(node.createdAt), "hours");
-
-    return (
-      <div>
-        {timeSinceOrder > 350 && this.props.orderReceived && (
-          <Banner title="Fulfillment Needed" status="critical">
-            <p> This order was placed over 350 hours ago. </p>
-          </Banner>
-        )}
-        <Card
-          key={`order-${this.props.index}`}
-          title={node.customer.firstName + " " + node.customer.lastName}
-          primaryFooterAction={{
-            content: "View Order",
-            onAction: () => this.setState({ orderDetails: true }),
-          }}
-          footerActionAlignment="left"
-        >
-          <Card.Section>
-            <Heading>
-              <p> {timeSinceOrder} Hours Ago </p>
-            </Heading>
-
-            {this.state.orderDetails && (
-              <OrderDetails
-                name={this.props.name}
-                orderReceived={this.props.orderReceived}
-                readyForPickup={this.props.readyForPickup}
-                closeOrderDetails={this.closeOrderDetails}
-                id={node.id}
-                restricted={node.customAttributes.some(
-                  (attribute) => attribute.key === "ageRestricted"
-                )}
-                transactions={node.transactions}
-                amount={node.totalPriceSet.shopMoney.amount}
-              />
-            )}
-          </Card.Section>
-        </Card>
-      </div>
-    );
-  }
-}
+          {orderDetails && (
+            <OrderDetails
+              orderTab={orderTab}
+              orderId={orderId}
+              closeOrderDetails={closeOrderDetails}
+            />
+          )}
+        </Card.Section>
+      </Card>
+    </div>
+  );
+};
 
 export default Order;

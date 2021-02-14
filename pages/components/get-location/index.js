@@ -1,52 +1,40 @@
-import { Component } from "react";
+import { Component, useState } from "react";
 import { Modal, TextField, Button, Form } from "@shopify/polaris";
 import locations from "../../data/locations.json";
 
-class Locations extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { open: true, location: "" };
-
-    this.submitLocation = this.submitLocation.bind(this);
-    this.changeLocation = this.changeLocation.bind(this);
-  }
-
-  submitLocation(e) {
+const Locations = ({ retrieveLocation }) => {
+  const [open, useOpen] = useState(true);
+  const submitLocation = (e) => {
     e.preventDefault();
 
-    this.setState({ open: false }, () => {
-      this.props.retrieveLocation(locations[this.state.location]);
-    });
-  }
+    useOpen(false);
+    retrieveLocation(locations[location]);
+  };
 
-  changeLocation(location) {
-    this.setState({ location });
-  }
+  const [location, useLocation] = useState("");
+  const changeLocation = (newLocation) => useLocation(newLocation);
 
-  render() {
-    return (
-      <Modal title="Store Location" open={this.state.open}>
-        <Modal.Section>
-          <Form onSubmit={this.submitLocation}>
-            <TextField
-              label="Location ID"
-              focused={true}
-              value={this.state.location}
-              onChange={this.changeLocation}
-              helpText="Add your store's Location ID (e.g. 2)."
-            />
+  return (
+    <Modal title="Store Location" open={open}>
+      <Modal.Section>
+        <Form onSubmit={submitLocation}>
+          <TextField
+            label="Location ID"
+            focused={true}
+            value={location}
+            onChange={changeLocation}
+            helpText="Add your store's Location ID (e.g. 2)."
+          />
 
-            <div className="small-spacing">
-              <Button primary submit disabled={!locations[this.state.location]}>
-                Submit
-              </Button>
-            </div>
-          </Form>
-        </Modal.Section>
-      </Modal>
-    );
-  }
-}
+          <div className="small-spacing">
+            <Button primary submit disabled={!locations[location]}>
+              Submit
+            </Button>
+          </div>
+        </Form>
+      </Modal.Section>
+    </Modal>
+  );
+};
 
 export default Locations;

@@ -1,33 +1,31 @@
 import { Button } from "@shopify/polaris";
-import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
+import { POST_CAPTURE_PAYMENT } from '../../mutations';
 
-const POST_CAPTURE_PAYMENT = gql`
-mutation CapturePayment($id: String!, $parentTransactionId: String!, $amount: String!) {
-  orderCapture(input: {id: $id, parentTransactionId: $parentTransactionId, amount: $amount}) {
-    transaction {
-      id
-    }
-  }
-}
-`;
-
-const CapturePayment = (props) => {
-  const { id, parentTransactionId, amount, closeOrderDetails, removeFromPickup } = props;
-
+const CapturePayment = ({
+  id,
+  parentTransactionId,
+  amount,
+  closeOrderDetails,
+  removeFromPickup,
+  disabled,
+  name,
+}) => {
   return (
     <Mutation mutation={POST_CAPTURE_PAYMENT}>
-      {capturePayment => (
+      {(capturePayment) => (
         <Button
           primary
+          disabled={disabled}
           onClick={async () => {
-            await capturePayment({ variables: { id, parentTransactionId, amount }});
+            await capturePayment({
+              variables: { id, parentTransactionId, amount },
+            });
             closeOrderDetails();
             removeFromPickup(id);
           }}
-          disabled={props.disabled}
         >
-          Capture Payment { props.name }
+          Capture Payment {name}
         </Button>
       )}
     </Mutation>

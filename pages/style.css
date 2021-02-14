@@ -2,6 +2,13 @@
   padding: 0rem 2rem;
 }
 
+.media-card-image {
+  width: 100px;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
 .small-spacing {
   margin: 1rem 0;
 }
@@ -18,9 +25,6 @@
 .stock-variant-title {
   font-size: 1.5rem;
   font-weight: bold;
-}
-
-.stock-variant-available {
 }
 
 .product-variants {
@@ -45,4 +49,8 @@
 
 .store-header-right {
   margin-left: auto;
+}
+
+.loading {
+  height: 100px;
 }

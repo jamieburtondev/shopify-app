@@ -1,100 +1,80 @@
-import { Component } from "react";
+import { useState } from "react";
 import { Page, Tabs, Button } from "@shopify/polaris";
 import "./style.css";
-import Orders from "./components/orders";
+import Orders from "./containers/orders";
 import Products from "./components/products";
 import Location from "./components/location";
 import GetLocation from "./components/get-location";
-class Index extends Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      location: null,
-      selectedTab: 0,
-      collections: [
-        "Cold Beverages",
-        "Hot Beverages",
-        "Food",
-        "Salty Snacks",
-        "Sweet Snacks",
-        "Best Selling Items",
-      ],
-    };
-    this.retrieveLocation = this.retrieveLocation.bind(this);
-    this.handleTabChange = this.handleTabChange.bind(this);
-  }
+const Index = () => {
+  const initialCollections = [
+    "Cold Beverages",
+    "Hot Beverages",
+    "Salty Snacks",
+    "Sweet Snacks",
+    "Best Selling Items",
+    "Food",
+    "Alcohol",
+    "Tobacco",
+  ];
 
-  retrieveLocation(location) {
-    this.setState({ location });
-  }
+  const tabs = [
+    {
+      id: "tab1",
+      content: "Orders Received",
+    },
+    {
+      id: "tab2",
+      content: "Ready for Pickup",
+    },
+    {
+      id: "tab3",
+      content: "Stock",
+    },
+  ];
 
-  handleTabChange(selectedTab) {
-    this.setState({ selectedTab });
-  }
+  const [location, useLocation] = useState(null);
+  const retrieveLocation = (newLocation) => useLocation(newLocation);
 
-  render() {
-    const { selectedTab } = this.state;
-    const tabs = [
-      {
-        id: "tab1",
-        content: "Orders Received",
-      },
-      {
-        id: "tab2",
-        content: "Ready for Pickup",
-      },
-      {
-        id: "tab3",
-        content: "Stock",
-      },
-    ];
+  const [selectedTab, useSelectedTab] = useState(0);
+  const handleTabChange = (newTab) => useSelectedTab(newTab);
 
-    return (
-      <Page>
-        <div className='store-header'>
-          {this.state.location && (
-            <Location id={this.state.location}></Location>
-          )}
+  const [collections] = useState(initialCollections);
 
-          {this.state.location && (
-            <div className="store-header-right small-spacing">
-              <Button primary onClick={() => this.setState({ location: "" })}>
-                Change Location
-              </Button>
-            </div>
-          )}
-        </div>
+  return (
+    <Page>
+      <div className="store-header">
+        {location && <Location id={location}></Location>}
 
-        {this.state.location && (
-          <Tabs
-            selected={selectedTab}
-            tabs={tabs}
-            onSelect={this.handleTabChange}
-          >
-            {this.state.location &&
-              (this.state.selectedTab === 0 ||
-                this.state.selectedTab === 1) && (
-                <Orders
-                  location={this.state.location}
-                  tab={this.state.selectedTab}
-                ></Orders>
-              )}
-            {this.state.location && this.state.selectedTab === 2 && (
-              <Products
-                collections={this.state.collections}
-                id={this.state.location}
-              ></Products>
-            )}
-          </Tabs>
+        {location && (
+          <div className="store-header-right small-spacing">
+            <Button primary onClick={() => useLocation("")}>
+              Change Location
+            </Button>
+          </div>
         )}
+      </div>
 
-        {!this.state.location && (
-          <GetLocation retrieveLocation={this.retrieveLocation}></GetLocation>
-        )}
-      </Page>
-    );
-  }
-}
+      {location && (
+        <Tabs
+          selected={selectedTab}
+          tabs={tabs}
+          onSelect={handleTabChange}
+        >
+          {location && (selectedTab === 0 || selectedTab === 1) && (
+            <Orders location={location} tab={selectedTab}></Orders>
+          )}
+          {location && selectedTab === 2 && (
+            <Products collections={collections} id={location}></Products>
+          )}
+        </Tabs>
+      )}
+
+      {!location && (
+        <GetLocation retrieveLocation={retrieveLocation}></GetLocation>
+      )}
+    </Page>
+  );
+};
 
 export default Index;

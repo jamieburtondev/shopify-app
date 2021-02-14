@@ -6,17 +6,13 @@ import {
   Button,
   ButtonGroup,
 } from "@shopify/polaris";
-import { Component, Fragment } from "react";
+import { Fragment, useState } from "react";
 
-class CheckAgeRestriction extends Component {
-  constructor(props) {
-    super(props);
+const CheckAgeRestriction = () => {
+  const [underage, useUnderage] = useState(null);
 
-    this.state = { underage: null };
-  }
-
-  render() {
-    const ageRestriction = (
+  return (
+    <Fragment>
       <Form>
         <TextContainer>
           <Heading> Age Restricted </Heading>
@@ -30,36 +26,28 @@ class CheckAgeRestriction extends Component {
           helpText="The order is ready for pickup!"
           name="age"
           value={false}
-          onChange={() => this.setState({ underage: false })}
+          onChange={() => useUnderage(false)}
         />
         <RadioButton
           label="No"
           helpText="The age restricted items will need to be removed."
           name="age"
           value={true}
-          onChange={() => this.setState({ underage: true })}
+          onChange={() => useUnderage(true)}
         />
       </Form>
-    );
 
-    return (
-      <Fragment>
-        {ageRestriction}
+      <ButtonGroup spacing="loose">
+        {
+          <Button disabled={!underage} secondary>
+            Remove Underage Items
+          </Button>
+        }
 
-        <ButtonGroup spacing="loose">
-          {
-            <Button disabled={!this.state.underage} secondary>
-              Remove Underage Items
-            </Button>
-          }
-
-          {this.props.render(
-            this.state.underage || this.state.underage === null
-          )}
-        </ButtonGroup>
-      </Fragment>
-    );
-  }
-}
+        {this.props.render(underage || underage === null)}
+      </ButtonGroup>
+    </Fragment>
+  );
+};
 
 export default CheckAgeRestriction;

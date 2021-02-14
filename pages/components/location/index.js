@@ -1,30 +1,13 @@
-import { Fragment } from "react";
-import { DisplayText, Heading, Subheading } from "@shopify/polaris";
-import gql from "graphql-tag";
+import { DisplayText, Subheading } from "@shopify/polaris";
+import { GET_LOCATION } from '../../queries'
 import { useQuery } from "@apollo/react-hooks";
 
-const GET_LOCATION = gql`
-  query GetLocation($id: ID!) {
-    location(id: $id) {
-      name
-      address {
-        address1
-        city
-        provinceCode
-      }
-    }
-  }
-`;
-
-const Location = (props) => {
-  const { id } = props;
+const Location = ({ id }) => {
   const { data, loading, error } = useQuery(GET_LOCATION, {
     variables: { id: `gid://shopify/Location/${id}` },
   });
 
-  if (loading) return "";
-
-  if (error) return console.log("error", error);
+  if (loading || error) return "";
 
   const { name, address } = data.location;
 

@@ -1,116 +1,48 @@
-import {
-  Modal,
-  MediaCard,
-  Page,
-  Button,
-} from "@shopify/polaris";
-import gql from "graphql-tag";
+import { Modal, MediaCard, Page } from "@shopify/polaris";
 import { useQuery } from "@apollo/react-hooks";
-import CheckAgeRestriction from "../check-age-restriction";
-import CapturePayment from "../capture-payment";
+import { GET_ORDER_DETAILS } from "../../queries";
 
-import { connect } from "react-redux";
-import { addToPickup, removeFromPickup } from "../../store/actions";
+const OrderDetails = ({
+  orderId,
+  orderTab,
+  closeOrderDetails,
+}) => {
+  const { data, loading, error } = useQuery(GET_ORDER_DETAILS, {
+    variables: { id: orderId },
+  });
 
-const GET_ORDER_DETAILS = gql`
-query GetOrderDetails($id: ID!)
-{
-  order(id: $id) {
-    lineItems(first: 10) {
-      edges {
-        node {
-          image {
-            originalSrc
-          }
-          title
-          originalTotalSet {
-            shopMoney {
-              amount
-            }
-          }
-        }
-      }
-    }
-    
-  }
-}
-`;
-
-const OrderDetails = (props) => {
-  const { id, closeOrderDetails, addToPickup } = props;
-  const { data, loading, error } = useQuery(GET_ORDER_DETAILS, { variables: { id }});
-
-  if (loading) return "";
-
-  if (error) return console.log("error", error);
+  if (loading || error) return "";
 
   return (
     <Modal title="Order Details" open={true} onClose={closeOrderDetails}>
       <Page>
-        {data.order.lineItems.edges.map((item, index) => (
-          <MediaCard
-            key={`${item.node.title}-${index}`}
-            title={item.node.title}
-            description={`$${
-              item.node.originalTotalSet.shopMoney.amount.match(
-                /(?<=\.)[\d]+/
-              )[0].length === 1
-                ? item.node.originalTotalSet.shopMoney.amount + "0"
-                : item.node.originalTotalSet.shopMoney.amount
-            }`}
-          >
-            <img
-              src={item.node.image ? item.node.image.originalSrc : null}
-              alt=""
-              width="100px"
-              height="100%"
-              style={{
-                objectFit: "cover",
-                objectPosition: "center",
-              }}
-            />
-          </MediaCard>
-        ))}
-          {props.readyForPickup && (
-            <CheckAgeRestriction
-              restricted={props.restricted}
-              render={(disabled) => (
-                <CapturePayment
-                  closeOrderDetails={closeOrderDetails}
-                  removeFromPickup={props.removeFromPickup}
-                  disabled={disabled}
-                  id={props.id}
-                  parentTransactionId={
-                    props.transactions[0] ? props.transactions[0].id : null
-                  }
-                  amount={props.amount}
-                  name={props.name}
-                ></CapturePayment>
-              )}
-            ></CheckAgeRestriction>
-          )}
+        {data.order.lineItems.edges.map((item, index) => {
+          const { originalTotalSet, title, image } = item;
+          const shopMoneyAmount = originalTotalSet.shopMoney.amount;
+          const secondToLastValue = shopMoneyAmount[shopMoneyAmount.length - 2];
+          const lastValue = shopMoneyAmount[shopMoneyAmount.length - 1];
 
-          {props.orderReceived && (
-            <Button
-              onClick={async () => {
-                await closeOrderDetails();
-                addToPickup(props.id);
-              }}
-              primary
+          return (
+            <MediaCard
+              key={`${title}-${index}`}
+              title={title}
+              description={`$${
+                secondToLastValue === "." && typeof lastValue === "number"
+                  ? shopMoneyAmount + "0"
+                  : shopMoneyAmount
+              }`}
             >
-              Add to Pickup
-            </Button>
-          )}
+              <img
+                src={image ? image.originalSrc : null}
+                className="media-card-image"
+              />
+            </MediaCard>
+          );
+        })}
+        {orderTab}
       </Page>
     </Modal>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addToPickup: (id) => dispatch(addToPickup({ id })),
-    removeFromPickup: (id) => dispatch(removeFromPickup({ id })),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(OrderDetails);
+export default OrderDetails;
