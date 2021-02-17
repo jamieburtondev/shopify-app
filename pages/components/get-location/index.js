@@ -1,6 +1,7 @@
-import { Component, useState } from "react";
+import React, { useState } from "react";
 import { Modal, TextField, Button, Form } from "@shopify/polaris";
 import locations from "../../data/locations.json";
+import PropTypes from 'prop-types';
 
 const Locations = ({ retrieveLocation }) => {
   const [open, useOpen] = useState(true);
@@ -12,8 +13,8 @@ const Locations = ({ retrieveLocation }) => {
   };
 
   const [location, useLocation] = useState("");
-  const changeLocation = (newLocation) => useLocation(newLocation);
-
+  const changeLocation = (value) => useLocation(value);
+  
   return (
     <Modal title="Store Location" open={open}>
       <Modal.Section>
@@ -36,5 +37,9 @@ const Locations = ({ retrieveLocation }) => {
     </Modal>
   );
 };
+
+Locations.propTypes = {
+  retrieveLocation: PropTypes.func
+}
 
 export default Locations;

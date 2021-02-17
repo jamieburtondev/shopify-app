@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 import ProductDetails from "../products-details";
 import { Stack, RadioButton, TextField, Select } from "@shopify/polaris";
+import PropTypes from "prop-types";
 
 const Products = ({ collections, id }) => {
   const [checked, useChecked] = useState(true);
@@ -64,5 +65,10 @@ const Products = ({ collections, id }) => {
     </Fragment>
   );
 };
+
+Products.propTypes = {
+  collections: PropTypes.array,
+  id: PropTypes.number
+}
 
 export default Products;

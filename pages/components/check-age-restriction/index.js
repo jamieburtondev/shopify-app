@@ -6,9 +6,10 @@ import {
   Button,
   ButtonGroup,
 } from "@shopify/polaris";
-import { Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
+import PropTypes from 'prop-types';
 
-const CheckAgeRestriction = () => {
+const CheckAgeRestriction = ({ render }) => {
   const [underage, useUnderage] = useState(null);
 
   return (
@@ -44,10 +45,14 @@ const CheckAgeRestriction = () => {
           </Button>
         }
 
-        {this.props.render(underage || underage === null)}
+        {render(underage || underage === null)}
       </ButtonGroup>
     </Fragment>
   );
 };
+
+CheckAgeRestriction.propTypes = {
+  render: PropTypes.func
+}
 
 export default CheckAgeRestriction;

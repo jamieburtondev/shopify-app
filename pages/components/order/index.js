@@ -1,18 +1,20 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, Heading, Banner } from "@shopify/polaris";
 import OrderDetails from "../../containers/order-details";
 import getOrderTab from "../../helpers/getOrderTab";
 import moment from "moment";
+import PropTypes from "prop-types";
 
 const Order = ({
-  order,
+  order: {
+    node: {
+      customer: { firstName: customerFirstName, lastName: customerLastName },
+      createdAt: orderCreatedAt,
+      id: orderId,
+    },
+  },
   orderReceived,
   readyForPickup,
-  node: {
-    customer: { firstName: customerFirstName, lastName: customerLastName },
-    createdAt: orderCreatedAt,
-    id: orderId,
-  },
   orderListNumber,
   addToPickup,
   removeFromPickup,
@@ -68,6 +70,15 @@ const Order = ({
       </Card>
     </div>
   );
+};
+
+Order.propTypes = {
+  order: PropTypes.object,
+  orderReceived: PropTypes.func,
+  readyForPickup: PropTypes.func,
+  orderListNumber: PropTypes.string,
+  addToPickup: PropTypes.func,
+  removeFromPickup: PropTypes.func,
 };
 
 export default Order;

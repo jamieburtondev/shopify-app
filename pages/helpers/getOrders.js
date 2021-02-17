@@ -22,7 +22,6 @@ const getJSX = ({ tab, readyForPickup, ordersReceived }) => {
           <Order
             order={order}
             orderReceived={true}
-            node={order.node}
             orderListNumber={index}
           />
         </Layout.Section>
@@ -33,7 +32,6 @@ const getJSX = ({ tab, readyForPickup, ordersReceived }) => {
           <Order
             order={order}
             readyForPickup={true}
-            node={order.node}
             orderListNumber={index}
           />
         </Layout.Section>

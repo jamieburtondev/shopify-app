@@ -1,11 +1,12 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { Frame, Loading } from "@shopify/polaris";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_PRODUCTS } from "../../queries";
 import { SET_STOCK } from "../../mutations";
 import getProductsToShow from "../../helpers/getProductsToShow";
+import PropTypes from "prop-types";
 
-const Products = ({ id, searchValue, searchCollection, checked }) => {
+const ProductDetails = ({ id, searchValue, searchCollection, checked }) => {
   const { data, loading, error, refetch: _refetch } = useQuery(GET_PRODUCTS, {
     variables: { id: `gid://shopify/Location/${id}` },
   });
@@ -31,10 +32,17 @@ const Products = ({ id, searchValue, searchCollection, checked }) => {
     searchValue,
     searchCollection,
     refetch,
-    setStock
+    setStock,
   });
 
   return <Fragment>{productsToShow}</Fragment>;
 };
 
-export default Products;
+ProductDetails.propTypes = {
+  id: PropTypes.number,
+  searchValue: PropTypes.string,
+  searchCollection: PropTypes.string,
+  checked: PropTypes.bool,
+};
+
+export default ProductDetails;

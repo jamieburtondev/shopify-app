@@ -1,6 +1,8 @@
+import React from 'react';
 import { DisplayText, Subheading } from "@shopify/polaris";
 import { GET_LOCATION } from '../../queries'
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/client";
+import PropTypes from 'prop-types';
 
 const Location = ({ id }) => {
   const { data, loading, error } = useQuery(GET_LOCATION, {
@@ -24,5 +26,9 @@ const Location = ({ id }) => {
     </div>
   );
 };
+
+Location.propTypes = {
+  id: PropTypes.number
+}
 
 export default Location;

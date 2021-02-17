@@ -1,6 +1,8 @@
+import React from 'react';
 import { Modal, MediaCard, Page } from "@shopify/polaris";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/client";
 import { GET_ORDER_DETAILS } from "../../queries";
+import PropTypes from "prop-types";
 
 const OrderDetails = ({
   orderId,
@@ -44,5 +46,11 @@ const OrderDetails = ({
     </Modal>
   );
 };
+
+OrderDetails.propTypes = {
+  orderId: PropTypes.number,
+  orderTab: PropTypes.elementType,
+  closeOrderDetails: PropTypes.func,
+}
 
 export default OrderDetails;

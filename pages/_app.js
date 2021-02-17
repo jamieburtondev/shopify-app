@@ -1,7 +1,7 @@
+import React from 'react';
 import fetch from "node-fetch";
 import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "react-apollo";
-import App, { Container } from "next/app";
+import { ApolloProvider } from "@apollo/client";
 import { AppProvider } from "@shopify/polaris";
 import { Provider } from "@shopify/app-bridge-react";
 import Cookies from "js-cookie";
